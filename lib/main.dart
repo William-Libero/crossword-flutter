@@ -2,10 +2,10 @@ import 'package:crosswordflutter/components/letterTiles.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(CacaPalavras());
+  runApp(CrossWord());
 }
 
-class CacaPalavras extends StatelessWidget {
+class CrossWord extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
