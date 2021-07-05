@@ -11,15 +11,17 @@ class LetterTiles extends StatefulWidget {
 
 class _LetterTilesState extends State<LetterTiles> {
   String _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  List<String> _correctWords = ["DOG", "DART", "NAME", "DARK"];
+  List<String> _correctWords = ["DOG", "CROSS", "WORD", "DARK"];
   List<String> solvedWords = [];
   String wordFormed = "";
+  bool buttonVisibility = false;
+  // Variaveis usadas na função que popula o array com as letras que
+  // aparecem no quadro de letras
+  final Random _randomNumber = new Random();
   dynamic crossWordChars = [];
   int index = 0;
   int indexCorrectWord = 0;
-  int indexChar = 0;
-  bool isTapped = false;
-  List<String> chars = [];
+  //Variaveis usadas na função que verifica a posição do elemento renderizado
   final Set<int> selectedIndexes = Set<int>();
   final Set<int> solvedIndexes = Set<int>();
   final key = GlobalKey();
@@ -96,7 +98,26 @@ class _LetterTilesState extends State<LetterTiles> {
             alignment: Alignment.topCenter,
             child: Text(
               _correctWords[index],
-              style: TextStyle(color: defineCorrectWordColor(index)),
+              style: TextStyle(
+                  color: defineCorrectWordColor(index),
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        Visibility(
+          visible: buttonVisibility,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: TextButton(
+              child: Text(
+                "Jogar Novamente",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: _clearGameData,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
             ),
           ),
         ),
@@ -148,34 +169,33 @@ class _LetterTilesState extends State<LetterTiles> {
   }
 
   getRandomString(int length) {
-    final Random _randomNumber = new Random();
-    for (int i = 0; i < 36; i++) {
-      if (index % 6 == 0 && index != 0) {
-        if (indexCorrectWord < _correctWords.length) {
-          List word = [_correctWords[indexCorrectWord]];
-          word.forEach((char) {
-            int i = 0;
-            while (i < char.length) {
-              crossWordChars.add(char[i]);
-              i++;
-            }
-          });
+    while (index < 36) {
+      if (index % 6 == 0 && index != 0 && indexCorrectWord < _correctWords.length) {
+        var word = _correctWords[indexCorrectWord].toString();
+        int i = 0;
+        while (i < word.length) {
+          crossWordChars.add(word[i]);
+          i++;
           index++;
-          indexCorrectWord++;
         }
+        indexCorrectWord++;
       } else {
         crossWordChars.add(String.fromCharCodes(Iterable.generate(length,
             (_) => _chars.codeUnitAt(_randomNumber.nextInt(_chars.length)))));
         index++;
       }
     }
+    index = 0;
+    indexCorrectWord = 0;
   }
 
   void takeCharsToFormCorrectWord(index) {
     wordFormed += crossWordChars[index].toString();
-    if (_correctWords.contains(wordFormed))
+    if (_correctWords.contains(wordFormed)) {
       solvedIndexes.addAll(selectedIndexes);
-    solvedWords.add(wordFormed);
+      solvedWords.add(wordFormed);
+    }
+    if (solvedWords.length == _correctWords.length) buttonVisibility = true;
   }
 
   defineColor(int index) {
@@ -194,6 +214,16 @@ class _LetterTilesState extends State<LetterTiles> {
     } else {
       return Colors.blue;
     }
+  }
+
+  _clearGameData() {
+    setState(() {
+      solvedIndexes.clear();
+      solvedWords.clear();
+      crossWordChars.clear();
+      buttonVisibility = false;
+    });
+    getRandomString(1);
   }
 }
 
