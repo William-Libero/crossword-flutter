@@ -1,20 +1,18 @@
-import 'package:crosswordflutter/components/letterTiles.dart';
+import 'package:crosswordflutter/routes/app_pages.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 void main() {
-  runApp(CrossWord());
+  runApp(MyApp());
 }
 
-class CrossWord extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Caça Palavras"),
-        ),
-        body: LetterTiles(),
-      ),
+    return GetMaterialApp(
+      getPages: AppPages.routes,
+      initialRoute: Routes.SPLASH,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
