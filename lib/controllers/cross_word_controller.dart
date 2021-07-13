@@ -10,7 +10,7 @@ import 'package:crosswordflutter/models/boxWordRender.dart';
 
 class CrossWordController extends GetxController {
   String _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  RxList<String> _correctWords = ["CROSS", "DOG", "WORD", "DARK", "LIGHT"].obs;
+  RxList<String> _correctWords = ["CROSS", "DOG", "WORD", "DARK", "HUNT"].obs;
   // RxList<String> _correctWords = ["DARK", "WORD"].obs;
   RxList<dynamic> solvedWords = [].obs;
   String wordFormed = "";
@@ -152,10 +152,8 @@ class CrossWordController extends GetxController {
       if(maxIndexes >= _correctWords.length){
         word = "";
       }
-      // print(indexDisplayWordDirectionHorizontal);
       
       if (index != indexDisplayWordDirectionVertical && indexDisplayWordDirectionHorizontal == index && word != "" && indexCorrectWordHorizontal != indexCorrectWordVertical && indexCorrectWordHorizontal < _correctWords.length) {
-        // print(indexDisplayWordDirectionHorizontal.toString());
         indexCorrectWordHorizontal % 2 == 0
             ? word = _correctWords[indexCorrectWordHorizontal].toString().split('').reversed.join()
             : word = _correctWords[indexCorrectWordHorizontal].toString();
@@ -170,16 +168,17 @@ class CrossWordController extends GetxController {
         maxIndexes++;
         indexDisplayWordDirectionHorizontal = indexDisplayWordDirectionHorizontal + 12;
         indexCorrectWordHorizontal++;
-        // print(indexCorrectWordHorizontal);
-        // print(indexCorrectWordVertical);
       }else if (indexDisplayWordDirectionVertical == index && word != "") {
+        if(indexCorrectWordVertical >= _correctWords.length)
+          indexCorrectWordVertical = _correctWords.length - 1;
+        
         if(indexCorrectWordHorizontal == indexCorrectWordVertical) 
           indexCorrectWordHorizontal = indexCorrectWordVertical + 1;
 
         indexCorrectWordVertical % 2 == 0
             ? word = _correctWords[indexCorrectWordVertical].toString().split('').reversed.join()
             : word = _correctWords[indexCorrectWordVertical].toString();
-        
+
         if (indexCharCorrectWord < word.length) {
           crossWordChars.add(word[indexCharCorrectWord]);
           indexDisplayWordDirectionVertical = indexDisplayWordDirectionVertical + 6;
@@ -187,11 +186,10 @@ class CrossWordController extends GetxController {
           indexCharCorrectWord++;
         } else {
           indexCharCorrectWord = 0;
-          indexDisplayWordDirectionVertical = 0;
+          indexDisplayWordDirectionVertical = indexDisplayWordDirectionVertical - 1;
           indexCorrectWordVertical = indexCorrectWordHorizontal + 2;
           maxIndexes++;
         } 
-        print(indexCorrectWordVertical);
       } else {
         crossWordChars.add(String.fromCharCodes(Iterable.generate(length,
             (_) => _chars.codeUnitAt(_randomNumber.nextInt(_chars.length)))));
